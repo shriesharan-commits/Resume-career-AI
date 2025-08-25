@@ -1,0 +1,10 @@
+import pandas as pd
+from .ai import match_job
+
+df = pd.read_csv("data/sample_jobs.csv")   # columns: title,company,location,description
+
+def predict_jobs(user_data: dict, top_n: int = 5):
+    skills = user_data["skills"]
+    df["score"] = df["description"].apply(lambda d: match_job(d, skills))
+    top = df.nlargest(top_n, "score")
+    return top.to_dict(orient="records")
